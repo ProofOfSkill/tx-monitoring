@@ -1,12 +1,14 @@
 import sys, signal
 import csv
 import time
+import configparser
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 from txmonitor.periodic import Periodic
 
+
 def get_connection():
     rpc_user = "bitcoinrpc"
-    rpc_password = "2555f20d9f87e20431c8be034f86b924"
+    rpc_password = "4d76a1178634ae3ee5c0c26af4f3e764"
     rpc_connection = AuthServiceProxy("http://%s:%s@127.0.0.1:8332" % (rpc_user, rpc_password))
     return rpc_connection
 
@@ -31,6 +33,9 @@ def init_data_csv():
 
 
 def main():
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    
     conn = get_connection()
     init_data_csv()
 
