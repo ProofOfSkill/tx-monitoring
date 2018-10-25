@@ -1,3 +1,5 @@
+import time
+
 class Periodic:
 
     def __init__(self, period, task):
@@ -19,3 +21,4 @@ class Periodic:
     def _doit(self):
         while self.isOn:
             self.task()
+            time.sleep(self.period)
