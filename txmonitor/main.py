@@ -3,7 +3,7 @@ import csv
 import time
 import threading
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
-from periodic import Periodic
+from txmonitor.periodic import Periodic
 
 
 def do_job():
