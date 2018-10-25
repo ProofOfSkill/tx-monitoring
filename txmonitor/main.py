@@ -6,10 +6,11 @@ from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 from txmonitor.periodic import Periodic
 
 
-def get_connection():
-    rpc_user = "bitcoinrpc"
-    rpc_password = "4d76a1178634ae3ee5c0c26af4f3e764"
-    rpc_connection = AuthServiceProxy("http://%s:%s@127.0.0.1:8332" % (rpc_user, rpc_password))
+def get_connection(config):
+    rpc_user = config['rpc_user']
+    rpc_password = config['rpc_password']
+    rpc_connection = AuthServiceProxy("http://%s:%s@%s:%s" % (rpc_user, rpc_password,
+                                                              config['rpc_ip'], config['rpc_port']))
     return rpc_connection
 
 
@@ -35,8 +36,7 @@ def init_data_csv():
 def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    
-    conn = get_connection()
+    conn = get_connection(config['RPC'])
     init_data_csv()
 
     def do_job():
