@@ -1,3 +1,2 @@
 # tx-monitoring
-Monitoing for BTC transactions
-
+Monitoring for BTC transactions
