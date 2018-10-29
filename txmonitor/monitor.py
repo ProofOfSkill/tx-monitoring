@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import signal
 import configparser
 from txmonitor.taskmanager import TaskManager
@@ -9,7 +9,8 @@ from txmonitor.data import Data
 # Monitor the mempool data from the Bitcoin node
 def monitor():
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    config.read(dir_path + '/config.ini')
     node = RPC(config['RPC']['ip'], config['RPC']['port'], config['RPC']['user'], config['RPC']['password'])
     file = Data()
 

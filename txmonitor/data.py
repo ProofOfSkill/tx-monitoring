@@ -1,3 +1,4 @@
+import os
 import csv
 import time
 from pathlib import Path
@@ -6,7 +7,8 @@ from datetime import date
 
 class Data:
     def __init__(self):
-        self.path = '../data'
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.path = dir_path + '/../data'
         self.headers = ['Timestamp', 'Number of TXID']
         self.initialize()
 
