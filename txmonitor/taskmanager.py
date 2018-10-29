@@ -1,9 +1,9 @@
 import time
 
-class Periodic:
 
-    def __init__(self, period, task):
-        self.period = period
+class TaskManager:
+    def __init__(self, delay, task):
+        self.delay = delay
         self.isOn = False
         self.task = task
 
@@ -11,14 +11,15 @@ class Periodic:
         if self.isOn:
             return False
         self.isOn = True
-        self._doit()
+        self.do()
 
     def stop(self):
         if not self.isOn:
             return False
         self.isOn = False
 
-    def _doit(self):
+    def do(self):
         while self.isOn:
             self.task()
-            time.sleep(self.period)
+            time.sleep(self.delay)
+
