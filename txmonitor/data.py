@@ -7,8 +7,7 @@ from datetime import date
 
 class Data:
     def __init__(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.path = dir_path + '/../data'
+        self.path = os.path.dirname(os.path.realpath(__file__)) + '/../data'
         self.headers = ['Timestamp', 'Number of TXID']
         self.initialize()
 

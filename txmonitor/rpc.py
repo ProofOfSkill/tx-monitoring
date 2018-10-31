@@ -1,3 +1,4 @@
+import sys
 from bitcoinrpc.authproxy import AuthServiceProxy
 
 
@@ -11,8 +12,13 @@ class RPC:
 
     # Authentication to the Bitcoin node
     def authenticate(self):
-        # TODO check connection errors
-        return AuthServiceProxy("http://%s:%s@%s:%s" % (self.user, self.password, self.ip, self.port))
+        try:
+            connection = AuthServiceProxy("http://%s:%s@%s:%s" % (self.user, self.password, self.ip, self.port))
+            self.get_blockchain_info(connection)
+        except Exception as err:
+            sys.exit("AuthServiceProxy error: {0}".format(err))
+        else:
+            return connection
 
     # Get information about node's current mempool
     # result (object) A object containing information about the memory pool
@@ -35,3 +41,10 @@ class RPC:
         data = self.connection.getrawmempool(verbose)
         print("GET_RAW_MEMPOOL: %s" % data)
         return data
+
+    # Get information about the current state of the block chain.
+    def get_blockchain_info(self, connection):
+        data = connection.getblockchaininfo()
+        print("BLOCKCHAIN_INFO: \nChain: %s\nBlocks: %s" % (data['chain'], data['blocks']))
+        return data
+
