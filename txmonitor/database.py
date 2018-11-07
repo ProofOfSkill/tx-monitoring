@@ -9,22 +9,27 @@ class Database:
         self.user = user
         self.password = password
         self.dbname = dbname
-        self.client = self.connect()
+        self.client = None
 
     def connect(self):
         # TODO Check errors
-        client = InfluxDBClient(self.ip, self.port, self.user, self.password, self.dbname)
-        MySeriesHelper.Meta.client = client
-        dbs = client.get_list_database()
+        self.client = InfluxDBClient(self.ip, self.port, self.user, self.password, self.dbname)
+        MySeriesHelper.Meta.client = self.client
+        dbs = self.client.get_list_database()
+
         if self.dbname not in [d['name'] for d in dbs]:
             print("Create %s Database" % self.dbname)
-            client.create_database(self.dbname)
-            client.switch_database(self.dbname)
-        print(dbs)
-        return client
+            self.client.create_database(self.dbname)
+            self.client.switch_database(self.dbname)
 
-    def write(self, data):
-        MySeriesHelper(network='mainnet', size=data['size'], bytes=data['bytes'])
+    @staticmethod
+    def write(mempool_data):
+        MySeriesHelper(network='mainnet',
+                       size=mempool_data['size'],
+                       bytes=mempool_data['bytes'],
+                       value=int(mempool_data['value']*100000000),
+                       fee=int(mempool_data['fee']*100000000)
+                       )
 
 
 class MySeriesHelper(SeriesHelper):
@@ -41,7 +46,7 @@ class MySeriesHelper(SeriesHelper):
         series_name = 'monitor.series'
 
         # Defines all the fields in this time series.
-        fields = ['size', 'bytes']
+        fields = ['size', 'bytes', 'value', 'fee']
 
         # Defines all the tags for the series.
         tags = ['network']
