@@ -1,5 +1,4 @@
 import sys
-import datetime
 from bitcoinrpc.authproxy import AuthServiceProxy
 
 
@@ -45,36 +44,29 @@ class RPC:
     # --time (int): The time the transaction entered the memory pool, Unix epoch time format
     # --height (int): The block height when the transaction entered the memory pool
     def get_raw_mempool(self, verbose):
-        data = self.connection.getrawmempool(verbose)
         mempool_data = {'size': 0, 'bytes': 0, 'value': 0, 'fee': 0}
+        data = self.connection.getrawmempool(verbose)
+        commands = [["getrawtransaction", txid, verbose] for txid in data]
+        tx_data = self.connection.batch_(commands)
+        mempool_data['size'] = len(tx_data)
+
         if verbose is True:
             for txid in data:
-                value = self.get_transaction_value(txid)
-                mempool_data['value'] += value
-                mempool_data['size'] += 1
                 mempool_data['bytes'] += data[txid]['size']
                 mempool_data['fee'] += data[txid]['fee']
-                # print("TXID: %s, Time: %s, Height: %s, Size: %s, Value: %s BTC, Fee: %s BTC" %
-                #       (txid,
-                #        datetime.datetime.fromtimestamp(data[txid]['time']).strftime('%Y-%m-%d %H:%M:%S'),
-                #        data[txid]['height'],
-                #        data[txid]['size'],
-                #        value,
-                #        data[txid]['fee']))
-        print("Current Mempool: %s TXs, Total size: %s bytes, Total Value: %s BTC, Total Fee %s BTC" %
-              (mempool_data['size'],
-               mempool_data['bytes'],
-               mempool_data['value'],
-               mempool_data['fee']))
-        return mempool_data
+            for tx in tx_data:
+                value = 0
+                if tx is not None:
+                    for vout in tx['vout']:
+                        value += vout['value']
+                mempool_data['value'] += value
+        # else:
+        # TODO decode raw tx
+        #     print(tx_data)
 
-    def get_transaction_value(self, txid):
-        data = self.connection.getrawtransaction(txid, True)
-        value = 0
-        if data is not None:
-            for vout in data['vout']:
-                value += vout['value']
-        return value
+        print("Current Mempool: %s TXs, Total size: %s bytes, Total Value: %s BTC, Total Fee %s BTC" %
+              (mempool_data['size'], mempool_data['bytes'], mempool_data['value'], mempool_data['fee']))
+        return mempool_data
 
     # Get information about the current state of the block chain.
     # -result (object): Information about the current state of the local block chain
@@ -103,4 +95,3 @@ class RPC:
         print("Bitcoin Core Node: \nChain: %s\nBlocks: %s\nPruned: %s\nPruneheight %s" %
               (data['chain'], data['blocks'], data['pruned'], data['pruneheight']))
         return data
-
