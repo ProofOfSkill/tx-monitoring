@@ -6,6 +6,7 @@ from timeit import default_timer as timer
 from taskmanager import TaskManager
 from rpc import RPC
 from database import Database
+from mempool import Mempool
 
 
 # Monitor the mempool data from the Bitcoin node
@@ -29,10 +30,12 @@ def monitor():
     def fetch_data():
         try:
             start = timer()
-            mempool_data = node.get_raw_mempool(True)
+            node.get_raw_mempool()
+            print("Current Mempool: %s TXs, Total size: %s bytes, Total Value: %s BTC, Total Fee %s BTC" %
+                  (Mempool.data['size'], Mempool.data['bytes'], Mempool.data['value'], Mempool.data['fee']))
             end = timer()
             print("%f seconds" % (end - start))
-            Database.write(mempool_data)
+            Database.write(Mempool.data)
         except (ConnectionError, ConnectionResetError) as err:
             print("ConnectionError: {0}".format(err))
             node.connect()

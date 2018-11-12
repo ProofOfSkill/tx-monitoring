@@ -1,5 +1,6 @@
 import sys
 from bitcoinrpc.authproxy import AuthServiceProxy
+from mempool import Mempool
 
 
 class RPC:
@@ -43,30 +44,13 @@ class RPC:
     # --modifiedfee (bitcoins): The transaction fee with fee deltas used for mining priority in decimal bitcoins
     # --time (int): The time the transaction entered the memory pool, Unix epoch time format
     # --height (int): The block height when the transaction entered the memory pool
-    def get_raw_mempool(self, verbose):
-        mempool_data = {'size': 0, 'bytes': 0, 'value': 0, 'fee': 0}
-        data = self.connection.getrawmempool(verbose)
-        commands = [["getrawtransaction", txid, verbose] for txid in data]
+    def get_raw_mempool(self):
+        data = self.connection.getrawmempool(True)
+        Mempool.update_tx_id(data)
+
+        commands = [["getrawtransaction", txid, True] for txid in Mempool.current_txs if Mempool.current_txs[txid] == 0]
         tx_data = self.connection.batch_(commands)
-        mempool_data['size'] = len(tx_data)
-
-        if verbose is True:
-            for txid in data:
-                mempool_data['bytes'] += data[txid]['size']
-                mempool_data['fee'] += data[txid]['fee']
-            for tx in tx_data:
-                value = 0
-                if tx is not None:
-                    for vout in tx['vout']:
-                        value += vout['value']
-                mempool_data['value'] += value
-        # else:
-        # TODO decode raw tx
-        #     print(tx_data)
-
-        print("Current Mempool: %s TXs, Total size: %s bytes, Total Value: %s BTC, Total Fee %s BTC" %
-              (mempool_data['size'], mempool_data['bytes'], mempool_data['value'], mempool_data['fee']))
-        return mempool_data
+        Mempool.update_tx_value(tx_data)
 
     # Get information about the current state of the block chain.
     # -result (object): Information about the current state of the local block chain
@@ -92,6 +76,5 @@ class RPC:
     # -softforks (array): An array of objects each describing a current or previous soft fork
     def get_blockchain_info(self):
         data = self.connection.getblockchaininfo()
-        print("Bitcoin Core Node: \nChain: %s\nBlocks: %s\nPruned: %s\nPruneheight %s" %
-              (data['chain'], data['blocks'], data['pruned'], data['pruneheight']))
+        print("Bitcoin Core Node: \nChain: %s\nBlocks: %s" % (data['chain'], data['blocks']))
         return data
