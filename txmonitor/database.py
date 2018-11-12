@@ -27,8 +27,8 @@ class Database:
         MySeriesHelper(network='mainnet',
                        size=mempool_data['size'],
                        bytes=mempool_data['bytes'],
-                       value=int(mempool_data['value']*100000000),
-                       fee=int(mempool_data['fee']*100000000)
+                       value=float(mempool_data['value']),
+                       fee=float(mempool_data['fee'])
                        )
 
 
@@ -43,7 +43,7 @@ class MySeriesHelper(SeriesHelper):
 
         # The series name must be a string. Add dependent fields/tags
         # in curly brackets.
-        series_name = 'monitor.series'
+        series_name = 'mempool.stats'
 
         # Defines all the fields in this time series.
         fields = ['size', 'bytes', 'value', 'fee']
@@ -53,7 +53,7 @@ class MySeriesHelper(SeriesHelper):
 
         # Defines the number of data points to store prior to writing
         # on the wire.
-        bulk_size = 5
+        bulk_size = 1
 
         # autocommit must be set to True when using bulk_size
         autocommit = True

@@ -1,6 +1,6 @@
 class Mempool(object):
     current_txs = {}
-    data = {'size': 0, 'bytes': 0, 'value': 0, 'fee': 0}
+    data = {'size': 0, 'bytes': 0, 'value': 0.0, 'fee': 0.0}
 
     @staticmethod
     def update_tx_id(data):
