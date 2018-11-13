@@ -29,7 +29,7 @@ class RPC:
     # -mempoolminfee (int): The lowest fee per kilobyte paid by any transaction in the memory pool
     def get_mempool_info(self):
         data = self.connection.getmempoolinfo()
-        print("GET_MEMPOOL_INFO: %s TXs, %s Mb" % (data['size'], round(data['bytes']/float(1 << 20), 4)))
+        print("GET_MEMPOOL_INFO: %s TXs, %s Mb" % (data['size'], round(data['bytes']/10 ** 6, 4)))
         return data
 
     # Get all TXIDs in the mempool
