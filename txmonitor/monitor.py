@@ -2,6 +2,7 @@ import sys
 import os
 import signal
 import configparser
+from bitcoinrpc.authproxy import JSONRPCException
 from timeit import default_timer as timer
 from taskmanager import TaskManager
 from rpc import RPC
@@ -39,6 +40,8 @@ def monitor():
         except (ConnectionError, ConnectionResetError) as err:
             print("ConnectionError: {0}".format(err))
             node.connect()
+        except JSONRPCException as err:
+            print("JSONError: {0}".format(err))
 
     global Task
     Task = TaskManager(20, fetch_data)
