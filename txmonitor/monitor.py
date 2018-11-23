@@ -36,7 +36,9 @@ def monitor():
                   (Mempool.data['size'], Mempool.data['bytes'], Mempool.data['value'], Mempool.data['fee']))
             end = timer()
             print("%f seconds" % (end - start))
-            Database.write(Mempool.data)
+
+            if Mempool.data['size'] != 0:
+                Database.write(Mempool.data)
         except (ConnectionError, ConnectionResetError) as err:
             print("ConnectionError: {0}".format(err))
             node.connect()
