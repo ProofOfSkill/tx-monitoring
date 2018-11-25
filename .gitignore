@@ -111,3 +111,9 @@ venv.bak/
 
 # idea
 .idea/
+
+# influxdb
+/influxdb
+
+# grafana
+/grafana

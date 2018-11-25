@@ -5,4 +5,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-CMD [ "python", "./txmonitor/monitor.py" ]
+CMD [ "python", "-u", "./txmonitor/monitor.py" ]

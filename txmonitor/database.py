@@ -15,12 +15,6 @@ class Database:
         # TODO Check errors
         self.client = InfluxDBClient(self.ip, self.port, self.user, self.password, self.dbname)
         MySeriesHelper.Meta.client = self.client
-        dbs = self.client.get_list_database()
-
-        if self.dbname not in [d['name'] for d in dbs]:
-            print("Create %s Database" % self.dbname)
-            self.client.create_database(self.dbname)
-            self.client.switch_database(self.dbname)
 
     @staticmethod
     def write(mempool_data):
