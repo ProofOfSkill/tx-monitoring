@@ -37,7 +37,7 @@ def monitor():
             end = timer()
             print("%f seconds" % (end - start))
 
-            if Mempool.data['size'] != 0:
+            if Mempool.current_txs:
                 Database.write(Mempool.data)
         except (ConnectionError, ConnectionResetError) as err:
             print("ConnectionError: {0}".format(err))
