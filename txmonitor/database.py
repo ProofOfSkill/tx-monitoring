@@ -13,7 +13,7 @@ class Database:
 
     def connect(self):
         # TODO Check errors
-        self.client = InfluxDBClient(self.ip, self.port, self.user, self.password, self.dbname)
+        self.client = InfluxDBClient(self.ip, self.port, self.user, self.password, self.dbname, retries=10)
         MySeriesHelper.Meta.client = self.client
 
     @staticmethod
