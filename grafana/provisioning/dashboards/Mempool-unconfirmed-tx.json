@@ -15,7 +15,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
   "links": [],
   "panels": [
     {
@@ -31,6 +30,7 @@
         "x": 0,
         "y": 0
       },
+      "hideTimeOverride": true,
       "id": 2,
       "legend": {
         "alignAsTable": false,
@@ -134,6 +134,7 @@
       }
     }
   ],
+  "refresh": "30s",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -172,5 +173,5 @@
   "timezone": "",
   "title": "Mempool Unconfirmed Transactions",
   "uid": "U_oKIHYmz",
-  "version": 1
+  "version": 2
 }
