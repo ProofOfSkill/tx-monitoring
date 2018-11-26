@@ -13,19 +13,18 @@ from mempool import Mempool
 # Monitor the mempool data from the Bitcoin node
 def monitor():
     config = configparser.ConfigParser()
-    config.read(os.path.dirname(os.path.realpath(__file__)) + '/config.ini')
-
-    node = RPC(config['RPC']['ip'],
-               config['RPC']['port'],
-               config['RPC']['user'],
-               config['RPC']['password'])
+    config.read(os.path.dirname(os.path.realpath(__file__)) + '/../config.ini')
+    node = RPC(config['RPC']['HOST'],
+               config['RPC']['RPCPORT'],
+               config['RPC']['RPCUSER'],
+               config['RPC']['RPCPASSWORD'])
     node.connect()
 
-    database = Database(config['DB']['ip'],
-                        config['DB']['port'],
-                        config['DB']['user'],
-                        config['DB']['password'],
-                        config['DB']['dbname'])
+    database = Database(config['DB']['INFLUXDB_HOST'],
+                        config['DB']['INFLUXDB_PORT'],
+                        config['DB']['INFLUXDB_USER'],
+                        config['DB']['INFLUXDB_USER_PASSWORD'],
+                        config['DB']['INFLUXDB_DB'])
     database.connect()
 
     def fetch_data():
@@ -36,7 +35,10 @@ def monitor():
                   (Mempool.data['size'], Mempool.data['bytes'], Mempool.data['value'], Mempool.data['fee']))
             end = timer()
             print("%f seconds" % (end - start))
-            Database.write(Mempool.data)
+
+            if Mempool.current_txs:
+                Database.write(Mempool.data)
+
         except (ConnectionError, ConnectionResetError) as err:
             print("ConnectionError: {0}".format(err))
             node.connect()

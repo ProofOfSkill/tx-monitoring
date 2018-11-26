@@ -1,9 +1,3 @@
-# csv file
-*.csv
-
-# config
-config.ini
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -117,3 +111,6 @@ venv.bak/
 
 # grafana
 /grafana
+
+# bitcoin core
+/bitcoin-core

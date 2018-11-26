@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   influxdb:
     image: influxdb:latest
@@ -9,17 +10,8 @@ services:
     volumes:
       - ./influxdb:/var/lib/influxdb
       - ./influxdb/config/:/etc/influxdb/
-    environment:
-      - INFLUXDB_DB=mempool
-      - INFLUXDB_HTTP_AUTH_ENABLED=true
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=admin
-      - INFLUXDB_USER=user
-      - INFLUXDB_USER_PASSWORD=user
-      - INFLUXDB_DATA_DIR=/var/lib/influxdb/data
-      - INFLUXDB_META_DIR=/var/lib/influxdb/meta
+    env_file: config.ini
     restart: always
-
 
   mempool-monitor:
     container_name: mempool-monitor
@@ -27,6 +19,7 @@ services:
     restart: always
     depends_on:
       - influxdb
+      - bitcoin-core
 
   grafana:
     image: grafana/grafana
@@ -36,15 +29,23 @@ services:
     volumes:
       - ./grafana:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_DEFAULT_THEME=dark
-      - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_USERS_ALLOW_ORG_CREATE=false
-      - GF_AUTH_ANONYMOUS_ENABLED=true
+    env_file: config.ini
     restart: always
     depends_on:
       - influxdb
 
+  bitcoin-core:
+    image: kylemanna/bitcoind
+    container_name: bitcoin-core
+    ports:
+      - 8333:8333
+      - 8332:8332
+    volumes:
+      - ./bitcoin-core:/bitcoin
+    env_file: config.ini
+    restart: always
 
+volumes:
+  influxdb: {}
+  grafana: {}
+  bitcoin-core: {}
